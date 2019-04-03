@@ -4,12 +4,23 @@
  */
 package visao;
 
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import modelo.ProdutoVO;
+import servicos.ProdutoServicos;
+import servicos.ServicosFactory;
+
 /**
  * @author Thiago Cury
  * @version 1.0 beta
  * @since 09/04/2014
  */
 public class GUIManutencaoProduto extends javax.swing.JInternalFrame {
+
+    DefaultTableModel dtm = new DefaultTableModel(
+            new Object[][]{},
+            new Object[]{"Código", "Nome", "Valor custo", "Quantidade"});
 
     /**
      * Creates new form GUIManutencaoProduto
@@ -28,15 +39,79 @@ public class GUIManutencaoProduto extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         jLayeredPane1 = new javax.swing.JLayeredPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jtableProduto = new javax.swing.JTable();
         jLayeredPane2 = new javax.swing.JLayeredPane();
+        jbAtualizar = new javax.swing.JButton();
+        jbDeletar = new javax.swing.JButton();
+        jbAlterar = new javax.swing.JButton();
+        jlPesquisa = new javax.swing.JLabel();
+        jtPesquisa = new javax.swing.JTextField();
+        jcomboFiltro = new javax.swing.JComboBox<>();
 
         setClosable(true);
         setIconifiable(true);
         setTitle("Manutenção Produto");
 
-        jLayeredPane1.setBorder(javax.swing.BorderFactory.createBevelBorder(0));
+        jLayeredPane1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jLayeredPane2.setBorder(javax.swing.BorderFactory.createBevelBorder(0));
+        jtableProduto.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        jtableProduto.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(jtableProduto);
+
+        jLayeredPane1.add(jScrollPane1);
+        jScrollPane1.setBounds(40, 10, 453, 240);
+
+        jLayeredPane2.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        jbAtualizar.setText("Atualizar");
+        jbAtualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbAtualizarActionPerformed(evt);
+            }
+        });
+        jLayeredPane2.add(jbAtualizar);
+        jbAtualizar.setBounds(50, 40, 150, 32);
+
+        jbDeletar.setText("Deletar");
+        jbDeletar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbDeletarActionPerformed(evt);
+            }
+        });
+        jLayeredPane2.add(jbDeletar);
+        jbDeletar.setBounds(210, 40, 150, 32);
+
+        jbAlterar.setText("Alterar");
+        jbAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jbAlterarActionPerformed(evt);
+            }
+        });
+        jLayeredPane2.add(jbAlterar);
+        jbAlterar.setBounds(370, 40, 150, 32);
+
+        jlPesquisa.setText("Pesquisa");
+
+        jtPesquisa.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jtPesquisaKeyReleased(evt);
+            }
+        });
+
+        jcomboFiltro.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Nome", "Codigo", "Valor custo", "Quantidade" }));
+        jcomboFiltro.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                jcomboFiltroItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -45,24 +120,168 @@ public class GUIManutencaoProduto extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
-                    .addComponent(jLayeredPane2, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jLayeredPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
+                    .addComponent(jLayeredPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jlPesquisa)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jtPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jcomboFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jlPesquisa)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jtPesquisa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jcomboFiltro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(jLayeredPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    private void limpar() {
+        dtm.setNumRows(0);
+    }
+
+    private void atualizarTabela() {
+        try {
+            ProdutoServicos ps
+                    = ServicosFactory.getProdutoServicos();
+            ArrayList<ProdutoVO> prods
+                    = ps.buscarProdutos();
+            //testar
+            System.out.println("TESTE: " + prods.toString());
+            for (int i = 0; i < prods.size(); i++) {
+                dtm.addRow(new String[]{
+                    String.valueOf(prods.get(i).getIdProduto()),
+                    prods.get(i).getNome(),
+                    String.valueOf(prods.get(i).getValorCusto()),
+                    String.valueOf(prods.get(i).getQuantidade())
+                });
+            }
+            jtableProduto.setModel(dtm);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Erro!" + e.getMessage());
+        }//fecha catch
+    }//fecha atualizar
+
+    private void deletar() {
+        try {
+            int linhaSelecionada = jtableProduto.getSelectedRow();
+
+            if (linhaSelecionada == -1) {
+                JOptionPane.showMessageDialog(this, "Selecione um produto!");
+                return;
+            }
+            ProdutoServicos ps = ServicosFactory.getProdutoServicos();
+
+            String id = jtableProduto.getValueAt(linhaSelecionada, 0).toString();
+            ps.deletarProduto(Long.parseLong(id));
+            JOptionPane.showMessageDialog(this, "Produto deletado com sucesso!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro! " + e.getMessage());
+        }
+    }//fecha deletar
+
+    private void alterar() {
+        try {
+            int linhaSelecionada = jtableProduto.getSelectedRow();
+            if (linhaSelecionada == -1) {
+                JOptionPane.showMessageDialog(this, "Escolha um produto para fazer a alteração");
+                return;
+            }
+            String id = jtableProduto.getValueAt(linhaSelecionada, 0).toString();
+            String nome = jtableProduto.getValueAt(linhaSelecionada, 1).toString();
+            String valorCusto = jtableProduto.getValueAt(linhaSelecionada, 2).toString();
+            String qtd = jtableProduto.getValueAt(linhaSelecionada, 3).toString();
+
+            ProdutoVO p = new ProdutoVO();
+            p.setIdProduto(Integer.parseInt(id));
+            p.setNome(nome);
+            p.setValorCusto(Double.parseDouble(valorCusto));
+            p.setQuantidade(Integer.parseInt(qtd));
+
+            ProdutoServicos ps = ServicosFactory.getProdutoServicos();
+            ps.alterarProduto(p);
+
+            JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro! " + e.getMessage());
+        }//fecha o catch
+    }//fecha alterar
+
+    private void filtrar() {
+        try {
+            String pesquisa = jtPesquisa.getText();
+            String filtro = jcomboFiltro.getSelectedItem().toString();
+            ProdutoServicos ps = ServicosFactory.getProdutoServicos();
+            
+            ArrayList<ProdutoVO> prods = new ArrayList<>();
+            ps.filtrar(pesquisa, filtro);
+            
+            for(int i=0; i<prods.size(); i++){
+                dtm.addRow(new String[]{
+                    String.valueOf(prods.get(i).getIdProduto()),
+                    String.valueOf(prods.get(i).getNome()),
+                    String.valueOf(prods.get(i).getValorCusto()),
+                    String.valueOf(prods.get(i).getQuantidade())
+                });
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Erro! " + e.getMessage());
+        }//fecha catch
+    }//fecha filtrar
+
+    private void jbAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAtualizarActionPerformed
+        limpar();
+        atualizarTabela();
+    }//GEN-LAST:event_jbAtualizarActionPerformed
+
+    private void jbDeletarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbDeletarActionPerformed
+        deletar();
+        limpar();
+        atualizarTabela();
+    }//GEN-LAST:event_jbDeletarActionPerformed
+
+    private void jbAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbAlterarActionPerformed
+        alterar();
+        limpar();
+        atualizarTabela();
+    }//GEN-LAST:event_jbAlterarActionPerformed
+
+    private void jtPesquisaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jtPesquisaKeyReleased
+        limpar();
+        filtrar();
+    }//GEN-LAST:event_jtPesquisaKeyReleased
+
+    private void jcomboFiltroItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_jcomboFiltroItemStateChanged
+        limpar();
+        filtrar();
+    }//GEN-LAST:event_jcomboFiltroItemStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JLayeredPane jLayeredPane2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton jbAlterar;
+    private javax.swing.JButton jbAtualizar;
+    private javax.swing.JButton jbDeletar;
+    private javax.swing.JComboBox<String> jcomboFiltro;
+    private javax.swing.JLabel jlPesquisa;
+    private javax.swing.JTextField jtPesquisa;
+    private javax.swing.JTable jtableProduto;
     // End of variables declaration//GEN-END:variables
 }

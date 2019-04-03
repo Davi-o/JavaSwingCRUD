@@ -16,9 +16,9 @@ import java.sql.SQLException;
 public class ConexaoBanco {
 
     //Atributos estáticos com os dados do Banco de Dados
-    private static String URL = "jdbc:mysql://localhost:3306/estoquetarde2";
-    private static String USUARIO = "root";
-    private static String SENHA = "root";
+    private static final String URL = "jdbc:mysql://localhost:3306/estoquemanha";
+    private static final String USUARIO = "root";
+    private static final String SENHA = "root";
 
     //Método que efetua a conexão com o MySQL
     public static Connection getConexao() throws SQLException {
@@ -30,6 +30,6 @@ public class ConexaoBanco {
         }//fecha catch
         return c;
     }//fecha metodo
-    
+
 }//fecha classe
 
